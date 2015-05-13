@@ -133,7 +133,7 @@ module Beaker
         begin
           # Here we try and assign an address from a floating IP pool
           # This seems to fail on some implementations (FloatingIpPoolNotFound)
-          ip = @compute_client.addresses.find { |ip| ip.instance_id.nil? }
+          ip = @compute_client.addresses.find { |ip| ip.fixed_ip.nil? }
           if ip.nil?
             @logger.debug "Creating IP for #{host.name} (#{host[:vmhostname]})"
             ip = @compute_client.addresses.create

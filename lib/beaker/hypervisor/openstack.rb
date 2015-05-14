@@ -93,13 +93,12 @@ module Beaker
       @logger.notify "Provisioning OpenStack"
 
       @hosts.each do |host|
-        host[:vmhostname] = generate_host_name
-        @logger.debug "Provisioning #{host.name} (#{host[:vmhostname]})"
+        @logger.debug "Provisioning #{host.name}"
         options = {
           :flavor_ref => flavor(host[:flavor]).id,
           :image_ref  => image(host[:image]).id,
           :nics       => [ {'net_id' => network(@options[:openstack_network]).id } ],
-          :name       => host[:vmhostname],
+          :name       => host.name,
         }
         options[:key_name] = key_name(host)
         vm = @compute_client.servers.create(options)
@@ -231,9 +230,9 @@ module Beaker
         type = key.ssh_type
         data = [ key.to_blob ].pack('m0')
         @logger.debug "Creating Openstack keypair for public key '#{type} #{data}'"
-        @compute_client.create_key_pair host[:vmhostname], "#{type} #{data}"
+        @compute_client.create_key_pair host.name, "#{type} #{data}"
         host['ssh'][:key_data] = [ key.to_pem ]
-        host[:vmhostname]
+        host.name
       end
     end
   end
